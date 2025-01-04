@@ -8,6 +8,7 @@ int main(const int argc, char* argv[]) {
     std::vector<std::string> lines;
     std::vector<std::string> encryptedLines;
 
+#pragma region Parameters
     for (int i = 1; i < argc; ++i) {
         if (std::string arg = argv[i]; arg == "-h" || arg == "--help") {
             std::cout << "Usage: " << argv[0] << "[options]\n"
@@ -51,7 +52,9 @@ int main(const int argc, char* argv[]) {
             return 1;
         }
     }
+#pragma endregion
 
+#pragma region Input Files
     if (options.contains("input")) {
         if (std::ifstream inputFile(options["input"]); inputFile.good()) {
             inputFile.seekg(0, std::ios::end);
@@ -69,7 +72,9 @@ int main(const int argc, char* argv[]) {
             return 1;
         }
     }
+#pragma endregion
 
+#pragma region XOR
     if (options.contains("xor")) {
         std::cout << "XOR enabled with value: " << options["xor"] << std::endl;
         Encryptor xorEncryptor(std::make_unique<XorString>());
@@ -82,7 +87,9 @@ int main(const int argc, char* argv[]) {
     if (options.contains("aes")) {
         std::cout << "AES enabled with key: " << options["aes"] << std::endl;
     }
+#pragma endregion
 
+#pragma region Output Files
     if (options.contains("output")) {
         std::ofstream outputFile(options["output"]);
         if (!outputFile) {
@@ -100,11 +107,10 @@ int main(const int argc, char* argv[]) {
             return 1;
         }
     }
+#pragma endregion
 
     std::cout << "Input file: " << options["input"] << std::endl;
     std::cout << "Output file: " << options["output"] << std::endl;
-
-
 
     return 0;
 }
