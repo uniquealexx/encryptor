@@ -1,5 +1,6 @@
 #include "encryptor.hpp"
 #include "xor_string.hpp"
+#include "aes_string.hpp"
 
 namespace fs = std::filesystem;
 
@@ -21,13 +22,15 @@ int main(const int argc, char* argv[]) {
 #pragma region Parameters
     for (int i = 1; i < argc; ++i) {
         if (std::string arg = argv[i]; arg == "-h" || arg == "--help") {
-            std::cout << "Usage: " << argv[0] << "[options]\n"
+            std::cout << "Usage: " << argv[0] << " [options]\n"
                       << "Options:\n"
                       << "  -h, --help              Displays the help message with usage instructions\n"
                       << "  -i <input_file>         Specifies the input text file\n"
                       << "  -o <output_file>        Specifies the output file for the encrypted/decrypted data\n"
                       << "  -xor <value>            Encrypts/decrypts the input file using XOR with the provided key\n"
-                      << "  -aes <key>              Encrypts/decrypts the input file using AES with the provided key\n";
+                      << "  -aes <key>              Encrypts/decrypts the input file using AES with the provided key\n"
+                      << "  -e                      Encrypts the input file (used with -aes)\n"
+                      << "  -d                      Decrypts the input file (used with -aes)\n";
             return 0;
         } else {
             switch (Hash(arg.c_str())) {
@@ -46,6 +49,12 @@ int main(const int argc, char* argv[]) {
                         std::cerr << "Error: -aes requires a key." << std::endl;
                         exit(1);
                     }
+                    break;
+                case Hash("-e"):
+                    options["mode"] = "encrypt";
+                    break;
+                case Hash("-d"):
+                    options["mode"] = "decrypt";
                     break;
                 case Hash("-i"):
                     if (i + 1 < argc) {
@@ -95,7 +104,7 @@ int main(const int argc, char* argv[]) {
     }
 #pragma endregion
 
-#pragma region XOR
+#pragma region XOR & AES Encryption & Decryption
     if (options.contains("xor")) {
         std::cout << "XOR enabled with value: " << options["xor"] << std::endl;
         Encryptor xorEncryptor(std::make_unique<XorString>());
@@ -107,6 +116,17 @@ int main(const int argc, char* argv[]) {
 
     if (options.contains("aes")) {
         std::cout << "AES enabled with key: " << options["aes"] << std::endl;
+        Encryptor aesEncryptor(std::make_unique<AESString>());
+
+        if (options["mode"] == "encrypt") {
+            for (const auto& data : lines) {
+                encryptedLines.push_back(aesEncryptor.Encrypt(data, options["aes"]));
+            }
+        } else if (options["mode"] == "decrypt") {
+            for (const auto& data : lines) {
+                encryptedLines.push_back(aesEncryptor.Decrypt(data, options["aes"]));
+            }
+        }
     }
 #pragma endregion
 

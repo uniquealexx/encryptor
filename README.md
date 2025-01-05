@@ -12,6 +12,8 @@ This C++ program provides a command-line tool for encrypting and decrypting text
 The program accepts the following command-line options:
 - `-xor <key>`: Encrypts/decrypts the input file using XOR with the provided key.
 - `-aes <key>`: Encrypts/decrypts the input file using AES with the provided key.
+- `-e`: Encrypts the input file (used with -aes).
+- `-d`: Decrypts the input file (used with -aes)
 - `-i <input_file>`: Specifies the input text file.
 - `-o <output_file>`: Specifies the output file for the encrypted/decrypted data.
 - `-h` or `--help`: Displays the help message with usage instructions.

@@ -8,5 +8,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <openssl/aes.h>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
+#include <stdexcept>
 
 #endif //INCLUDES_HPP
